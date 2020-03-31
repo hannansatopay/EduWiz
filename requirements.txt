@@ -1,0 +1,7 @@
+regex
+requests
+dotenv
+flask
+nltk
+time
+xml.etree

@@ -1,6 +1,5 @@
 regex
 requests
-dotenv
 flask
 nltk
 time

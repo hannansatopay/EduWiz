@@ -190,14 +190,13 @@ def getTokenAndSubdomain():
         try:
             headers = {'content-type': 'application/x-www-form-urlencoded'}
             data = {
-                'client_id': str(os.environ.get('CLIENT_ID')),
-                'client_secret': str(os.environ.get('CLIENT_SECRET')),
+                'client_id': "6ac840a0-7415-4e3b-98b1-28fc2424bc43",
+                'client_secret': "CromptonGreaves007@",
                 'resource': 'https://cognitiveservices.azure.com/',
                 'grant_type': 'client_credentials'
             }
 
-            resp = requests.post('https://login.windows.net/' + str(
-                os.environ.get('TENANT_ID')) + '/oauth2/token', data=data, headers=headers)
+            resp = requests.post('https://login.windows.net/' + "2feb31ec-24c0-4f0e-8ee7-7bf3b3585b79" + '/oauth2/token', data=data, headers=headers)
             jsonResp = resp.json()
 
             if ('access_token' not in jsonResp):
@@ -205,7 +204,7 @@ def getTokenAndSubdomain():
                 raise Exception('AAD Authentication error')
 
             token = jsonResp['access_token']
-            subdomain = str(os.environ.get('SUBDOMAIN'))
+            subdomain = "Speedster"
 
             return jsonify(token=token, subdomain=subdomain)
         except Exception as e:

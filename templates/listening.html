@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>EduWiz</title>
+
+  <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+  <style type="text/css">
+    .header {
+      text-align: center;
+      background-color: #1fb5f6;
+      margin-top: 0px;
+      color: white;
+      padding: 20px;
+    }
+
+    .button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 7px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>EduWiz (Listening Section)</h1>
+  </div>
+  <div class="container" style="display: flex; justify-content: center; align-items: center; margin: 50px;">
+    <audio controls>
+      <source src="{{ url_for('static', filename='audio.wav') }}" type="audio/mpeg">
+    </audio>
+  </div>
+  <hr>
+  <div class="quiz container">
+    {{quiz |safe}}
+  </div>
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <button class="button">Submit</button>
+  </div>
+  <div style="display: none;">
+    {{answer |safe}}
+  </div>
+  <script type="text/javascript">
+    $(".button").click(function() {
+      var score = 0;
+      $.each($("input:radio:checked"), function(__, value) {
+        if($(value).parent().text() == $('#' + $(value).attr('name')).text()) {
+          score = score + 1;
+        }
+      });
+      alert("Your total score is: " + score)
+    });
+  </script>
+</body>
+
+</html>

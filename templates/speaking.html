@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>EduWiz</title>
+
+  <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+  <style type="text/css">
+    .header {
+      text-align: center;
+      background-color: #1fb5f6;
+      margin-top: 0px;
+      color: white;
+      padding: 20px;
+    }
+
+    .button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 7px;
+    }
+
+    #input {
+      width: 100%;
+      resize: none;
+      border-radius: 10px;
+      border: 1px solid purple;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>EduWiz (Speaking Section)</h1>
+  </div>
+  <div class="quiz container" style="display: flex; justify-content: center; align-items: center; margin: 20px;">
+    <h4>{{question}}</h4>
+  </div>
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <button class="button" id="startRecognizeOnceAsyncButton">Start recognition</button>
+  </div>
+  <div class="text container">
+    <textarea id="input" rows="10" disabled></textarea>
+  </div>
+  <div class="analysis container"></div>
+  <script src="{{ url_for('static', filename='scripts/microsoft.cognitiveservices.speech.sdk.bundle.js') }}"></script>
+  <script>
+    var startRecognizeOnceAsyncButton;
+    var SpeechSDK;
+    var recognizer;
+
+    document.addEventListener("DOMContentLoaded", function () {
+      startRecognizeOnceAsyncButton = document.getElementById("startRecognizeOnceAsyncButton");
+
+      startRecognizeOnceAsyncButton.addEventListener("click", function () {
+        startRecognizeOnceAsyncButton.disabled = true;
+
+        var speechConfig = SpeechSDK.SpeechConfig.fromSubscription('{{key}}', '{{region}}');
+
+        speechConfig.speechRecognitionLanguage = "en-US";
+        var audioConfig  = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+        recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+
+        recognizer.recognizeOnceAsync(
+          function (result) {
+            startRecognizeOnceAsyncButton.disabled = false;
+            $("#input").val(result.text);
+            window.console.log(result);
+            recognizer.close();
+            recognizer = undefined;
+            $.ajax({
+              data: {
+                text: result.text
+              },
+              type: 'POST',
+              url: '/textanalytics/speaking'
+            }).done(function(data) {
+              $(".analysis").html(data["display"]);
+            });
+          },
+          function (err) {
+            startRecognizeOnceAsyncButton.disabled = false;
+            window.console.log(err);
+            recognizer.close();
+            recognizer = undefined;
+          });
+      });
+
+      if (window.SpeechSDK) {
+        SpeechSDK = window.SpeechSDK;
+        startRecognizeOnceAsyncButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

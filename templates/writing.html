@@ -7,7 +7,7 @@
   <title>EduWiz</title>
 
   <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
   <style type="text/css">
     .header {
@@ -31,39 +31,40 @@
       cursor: pointer;
       border-radius: 7px;
     }
+
+    #input {
+      width: 100%;
+      resize: none;
+      border-radius: 10px;
+      border: 1px solid purple;
+    }
   </style>
 </head>
 
 <body>
   <div class="header">
-    <h1>EduWiz (Listening Section)</h1>
+    <h1>EduWiz (Writing Section)</h1>
   </div>
-  <div class="container" style="display: flex; justify-content: center; align-items: center; margin: 50px;">
-    <audio controls>
-      <source src="{{ url_for('static', filename='audio.wav') }}" type="audio/mpeg">
-    </audio>
+  <div class="quiz container" style="display: flex; justify-content: center; align-items: center; margin: 20px;">
+    <h4>{{question}}</h4>
   </div>
-  <hr>
-  <div class="quiz container">
-    {{quiz |safe}}
+  <div class="text container">
+    <textarea id="input" rows="10"></textarea>
   </div>
   <div style="display: flex; justify-content: center; align-items: center;">
-    <button class="button">Submit</button>
+    <button class="button">Evaluate</button>
   </div>
-  <div style="display: none;">
-    {{answer |safe}}
-  </div>
+  <div class="analysis container"></div>
   <script type="text/javascript">
     $(".button").click(function() {
-      var score = 0;
-      $.each($("input:radio:checked"), function(__, value) {
-        if ($(value).parent().text() == $('#' + $(value).attr('name')).text()) {
-          score = score + 1;
-        }
-      });
-      Swal.fire({
-        icon: "success",
-        text: "Your total score is: " + score
+      $.ajax({
+        data: {
+          text: $("#input").val()
+        },
+        type: 'POST',
+        url: '/textanalytics/writing'
+      }).done(function(data) {
+        $(".analysis").html(data["display"]);
       });
     });
   </script>
